@@ -1,4 +1,4 @@
-package tests
+package log
 
 import (
 	"errors"
@@ -16,8 +16,6 @@ import (
 	flam "github.com/happyhippyhippo/flam"
 	config "github.com/happyhippyhippo/flam-config"
 	filesystem "github.com/happyhippyhippo/flam-filesystem"
-	log "github.com/happyhippyhippo/flam-log"
-	mocks "github.com/happyhippyhippo/flam-log/tests/mocks"
 	time "github.com/happyhippyhippo/flam-time"
 )
 
@@ -27,25 +25,25 @@ func Test_fileStream(t *testing.T) {
 		defer ctrl.Finish()
 
 		config.Defaults = flam.Bag{}
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "invalid",
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
 
 		assert.ErrorIs(
 			t,
-			log.NewProvider().(flam.BootableProvider).Boot(container),
+			NewProvider().(flam.BootableProvider).Boot(container),
 			flam.ErrInvalidResourceConfig)
 	})
 
@@ -54,27 +52,27 @@ func Test_fileStream(t *testing.T) {
 		defer ctrl.Finish()
 
 		config.Defaults = flam.Bag{}
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "invalid",
 				"path":       "/path",
 			},
 		})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
 
 		assert.ErrorIs(
 			t,
-			log.NewProvider().(flam.BootableProvider).Boot(container),
+			NewProvider().(flam.BootableProvider).Boot(container),
 			flam.ErrUnknownResource)
 	})
 
@@ -83,31 +81,31 @@ func Test_fileStream(t *testing.T) {
 		defer ctrl.Finish()
 
 		config.Defaults = flam.Bag{}
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"disk":       "invalid",
 				"path":       "/path",
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
 
 		assert.ErrorIs(
 			t,
-			log.NewProvider().(flam.BootableProvider).Boot(container),
+			NewProvider().(flam.BootableProvider).Boot(container),
 			flam.ErrUnknownResource)
 	})
 
@@ -120,34 +118,34 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"disk":       "mock",
 				"path":       "/file",
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		expectedError := fmt.Errorf("error")
-		disk := mocks.NewDisk(ctrl)
+		disk := NewDiskMock(ctrl)
 		disk.EXPECT().
 			OpenFile("/file", os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.FileMode(0o644)).
 			Return(nil, expectedError)
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -159,7 +157,7 @@ func Test_fileStream(t *testing.T) {
 
 		assert.ErrorIs(
 			t,
-			log.NewProvider().(flam.BootableProvider).Boot(container),
+			NewProvider().(flam.BootableProvider).Boot(container),
 			expectedError)
 	})
 
@@ -172,31 +170,31 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "debug",
 				"disk":       "mock",
 				"path":       "/file",
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		disk := afero.NewMemMapFs()
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -205,17 +203,17 @@ func Test_fileStream(t *testing.T) {
 		}, dig.Group(filesystem.DiskCreatorGroup)))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
-		require.NoError(t, log.NewProvider().(flam.BootableProvider).Boot(container))
+		require.NoError(t, NewProvider().(flam.BootableProvider).Boot(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetStream("my_stream")
 			require.NotNil(t, got)
 			require.NoError(t, e)
 
-			assert.Equal(t, log.Debug, got.GetLevel())
+			assert.Equal(t, Debug, got.GetLevel())
 
-			assert.NoError(t, got.SetLevel(log.Info))
-			assert.Equal(t, log.Info, got.GetLevel())
+			assert.NoError(t, got.SetLevel(Info))
+			assert.Equal(t, Info, got.GetLevel())
 		}))
 	})
 
@@ -228,32 +226,32 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "debug",
 				"disk":       "mock",
 				"path":       "/file",
 				"channels":   []any{"channel_2", "channel_1"},
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		disk := afero.NewMemMapFs()
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -262,9 +260,9 @@ func Test_fileStream(t *testing.T) {
 		}, dig.Group(filesystem.DiskCreatorGroup)))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
-		require.NoError(t, log.NewProvider().(flam.BootableProvider).Boot(container))
+		require.NoError(t, NewProvider().(flam.BootableProvider).Boot(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetStream("my_stream")
 			require.NotNil(t, got)
 			require.NoError(t, e)
@@ -303,32 +301,32 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "warning",
 				"disk":       "mock",
 				"path":       "/file",
 				"channels":   []any{"channel_1"},
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		disk := afero.NewMemMapFs()
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -337,12 +335,12 @@ func Test_fileStream(t *testing.T) {
 		}, dig.Group(filesystem.DiskCreatorGroup)))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
-		require.NoError(t, log.NewProvider().(flam.BootableProvider).Boot(container))
+		require.NoError(t, NewProvider().(flam.BootableProvider).Boot(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			assert.NoError(t, facade.Signal(log.Debug, "channel_1", "channel 1 : debug message"))
-			assert.NoError(t, facade.Signal(log.Fatal, "channel_2", "channel 2 : fatal message"))
-			assert.NoError(t, facade.Signal(log.Fatal, "channel_1", "channel 1 : fatal message"))
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			assert.NoError(t, facade.Signal(Debug, "channel_1", "channel 1 : debug message"))
+			assert.NoError(t, facade.Signal(Fatal, "channel_2", "channel 2 : fatal message"))
+			assert.NoError(t, facade.Signal(Fatal, "channel_1", "channel 1 : fatal message"))
 			assert.NoError(t, facade.Flush())
 		}))
 
@@ -370,32 +368,32 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "warning",
 				"disk":       "mock",
 				"path":       "/file",
 				"channels":   []any{"*"},
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		disk := afero.NewMemMapFs()
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -404,12 +402,12 @@ func Test_fileStream(t *testing.T) {
 		}, dig.Group(filesystem.DiskCreatorGroup)))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
-		require.NoError(t, log.NewProvider().(flam.BootableProvider).Boot(container))
+		require.NoError(t, NewProvider().(flam.BootableProvider).Boot(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			assert.NoError(t, facade.Signal(log.Debug, "channel_1", "channel 1 : debug message"))
-			assert.NoError(t, facade.Signal(log.Fatal, "channel_2", "channel 2 : fatal message"))
-			assert.NoError(t, facade.Signal(log.Fatal, "channel_1", "channel 1 : fatal message"))
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			assert.NoError(t, facade.Signal(Debug, "channel_1", "channel 1 : debug message"))
+			assert.NoError(t, facade.Signal(Fatal, "channel_2", "channel 2 : fatal message"))
+			assert.NoError(t, facade.Signal(Fatal, "channel_1", "channel 1 : fatal message"))
 			assert.NoError(t, facade.Flush())
 		}))
 
@@ -443,32 +441,32 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "warning",
 				"disk":       "mock",
 				"path":       "/file",
 				"channels":   []any{"channel_1"},
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		disk := afero.NewMemMapFs()
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 
@@ -477,12 +475,12 @@ func Test_fileStream(t *testing.T) {
 		}, dig.Group(filesystem.DiskCreatorGroup)))
 
 		require.NoError(t, config.NewProvider().(flam.BootableProvider).Boot(container))
-		require.NoError(t, log.NewProvider().(flam.BootableProvider).Boot(container))
+		require.NoError(t, NewProvider().(flam.BootableProvider).Boot(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			assert.NoError(t, facade.Broadcast(log.Debug, "channel 1 : debug message"))
-			assert.NoError(t, facade.Broadcast(log.Fatal, "channel 2 : fatal message"))
-			assert.NoError(t, facade.Broadcast(log.Fatal, "channel 1 : fatal message"))
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			assert.NoError(t, facade.Broadcast(Debug, "channel 1 : debug message"))
+			assert.NoError(t, facade.Broadcast(Fatal, "channel 2 : fatal message"))
+			assert.NoError(t, facade.Broadcast(Fatal, "channel 1 : fatal message"))
 			assert.NoError(t, facade.Flush())
 		}))
 
@@ -514,41 +512,41 @@ func Test_fileStream(t *testing.T) {
 			"mock": flam.Bag{
 				"driver": "mock",
 			}})
-		_ = config.Defaults.Set(log.PathSerializers, flam.Bag{
+		_ = config.Defaults.Set(PathSerializers, flam.Bag{
 			"json": flam.Bag{
-				"driver": log.SerializerDriverJson,
+				"driver": SerializerDriverJson,
 			}})
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"my_stream": flam.Bag{
-				"driver":     log.StreamDriverFile,
+				"driver":     StreamDriverFile,
 				"serializer": "json",
 				"level":      "warning",
 				"disk":       "mock",
 				"path":       "/file",
 				"channels":   []any{"channel_1"},
 			}})
-		_ = config.Defaults.Set(log.PathBoot, true)
+		_ = config.Defaults.Set(PathBoot, true)
 		defer func() { config.Defaults = flam.Bag{} }()
 
 		container := dig.New()
-		provider := log.NewProvider()
+		provider := NewProvider()
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
 		require.NoError(t, provider.Register(container))
 
 		expectedError := errors.New("expected error")
-		file := mocks.NewFile(ctrl)
+		file := NewFileMock(ctrl)
 		file.EXPECT().Close().Return(expectedError).Times(1)
 
-		disk := mocks.NewDisk(ctrl)
+		disk := NewDiskMock(ctrl)
 		disk.EXPECT().
 			OpenFile("/file", os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.FileMode(0o644)).
 			Return(file, nil).
 			Times(1)
 
 		diskCreatorConfig := flam.Bag{"id": "mock", "driver": "mock"}
-		diskCreator := mocks.NewDiskCreator(ctrl)
+		diskCreator := NewDiskCreatorMock(ctrl)
 		diskCreator.EXPECT().Accept(diskCreatorConfig).Return(true).Times(1)
 		diskCreator.EXPECT().Create(diskCreatorConfig).Return(disk, nil).Times(1)
 

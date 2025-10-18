@@ -1,4 +1,4 @@
-package tests
+package log
 
 import (
 	"errors"
@@ -12,8 +12,6 @@ import (
 	flam "github.com/happyhippyhippo/flam"
 	config "github.com/happyhippyhippo/flam-config"
 	filesystem "github.com/happyhippyhippo/flam-filesystem"
-	log "github.com/happyhippyhippo/flam-log"
-	mocks "github.com/happyhippyhippo/flam-log/tests/mocks"
 	time "github.com/happyhippyhippo/flam-time"
 )
 
@@ -26,18 +24,18 @@ func Test_facade_Signal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Info, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Info, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(0)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Signal(log.Info, "channel", "message"))
+			assert.NoError(t, facade.Signal(Info, "channel", "message"))
 		}))
 	})
 
@@ -49,18 +47,18 @@ func Test_facade_Signal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Info, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Info, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Signal(log.Info, "channel", "message"))
+			assert.NoError(t, facade.Signal(Info, "channel", "message"))
 			assert.NoError(t, facade.Flush())
 		}))
 	})
@@ -73,18 +71,18 @@ func Test_facade_Signal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Info, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Info, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Signal(log.Info, "channel", "message", flam.Bag{"key": "value"}))
+			assert.NoError(t, facade.Signal(Info, "channel", "message", flam.Bag{"key": "value"}))
 			assert.NoError(t, facade.Flush())
 		}))
 	})
@@ -99,18 +97,18 @@ func Test_facade_Broadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Info, "message", flam.Bag{}).
 			Return(nil).
 			Times(0)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Broadcast(log.Info, "message"))
+			assert.NoError(t, facade.Broadcast(Info, "message"))
 		}))
 	})
 
@@ -122,18 +120,18 @@ func Test_facade_Broadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Info, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Broadcast(log.Info, "message"))
+			assert.NoError(t, facade.Broadcast(Info, "message"))
 			assert.NoError(t, facade.Flush())
 		}))
 	})
@@ -146,18 +144,18 @@ func Test_facade_Broadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Info, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
-			assert.NoError(t, facade.Broadcast(log.Info, "message", flam.Bag{"key": "value"}))
+			assert.NoError(t, facade.Broadcast(Info, "message", flam.Bag{"key": "value"}))
 			assert.NoError(t, facade.Flush())
 		}))
 	})
@@ -172,15 +170,15 @@ func Test_facade_FatalSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Fatal, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Fatal, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.FatalSignal("channel", "message"))
@@ -196,15 +194,15 @@ func Test_facade_FatalSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Fatal, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Fatal, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.FatalSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -222,15 +220,15 @@ func Test_facade_FatalBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Fatal, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Fatal, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.FatalBroadcast("message"))
@@ -246,15 +244,15 @@ func Test_facade_FatalBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Fatal, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Fatal, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.FatalBroadcast("message", flam.Bag{"key": "value"}))
@@ -272,15 +270,15 @@ func Test_facade_ErrorSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Error, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Error, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.ErrorSignal("channel", "message"))
@@ -296,15 +294,15 @@ func Test_facade_ErrorSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Error, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Error, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.ErrorSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -322,15 +320,15 @@ func Test_facade_ErrorBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Error, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Error, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.ErrorBroadcast("message"))
@@ -346,15 +344,15 @@ func Test_facade_ErrorBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Error, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Error, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.ErrorBroadcast("message", flam.Bag{"key": "value"}))
@@ -372,15 +370,15 @@ func Test_facade_WarningSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Warning, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Warning, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.WarningSignal("channel", "message"))
@@ -396,15 +394,15 @@ func Test_facade_WarningSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Warning, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Warning, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.WarningSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -422,15 +420,15 @@ func Test_facade_WarningBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Warning, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Warning, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.WarningBroadcast("message"))
@@ -446,15 +444,15 @@ func Test_facade_WarningBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Warning, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Warning, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.WarningBroadcast("message", flam.Bag{"key": "value"}))
@@ -472,15 +470,15 @@ func Test_facade_NoticeSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Notice, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Notice, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeSignal("channel", "message"))
@@ -496,15 +494,15 @@ func Test_facade_NoticeSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Notice, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Notice, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -522,15 +520,15 @@ func Test_facade_NoticeBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Notice, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Notice, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeBroadcast("message"))
@@ -546,15 +544,15 @@ func Test_facade_NoticeBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Notice, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Notice, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeBroadcast("message", flam.Bag{"key": "value"}))
@@ -572,15 +570,15 @@ func Test_facade_InfoSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Info, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Info, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.InfoSignal("channel", "message"))
@@ -596,15 +594,15 @@ func Test_facade_InfoSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Info, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Info, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.InfoSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -622,15 +620,15 @@ func Test_facade_InfoBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Info, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.InfoBroadcast("message"))
@@ -646,15 +644,15 @@ func Test_facade_InfoBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Info, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.InfoBroadcast("message", flam.Bag{"key": "value"}))
@@ -672,15 +670,15 @@ func Test_facade_DebugSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Debug, "channel", "message", flam.Bag{}).
+			Signal(gomock.Any(), Debug, "channel", "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.DebugSignal("channel", "message"))
@@ -696,15 +694,15 @@ func Test_facade_DebugSignal(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Debug, "channel", "message", flam.Bag{"key": "value"}).
+			Signal(gomock.Any(), Debug, "channel", "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.DebugSignal("channel", "message", flam.Bag{"key": "value"}))
@@ -722,15 +720,15 @@ func Test_facade_DebugBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Debug, "message", flam.Bag{}).
+			Broadcast(gomock.Any(), Debug, "message", flam.Bag{}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.DebugBroadcast("message"))
@@ -746,15 +744,15 @@ func Test_facade_DebugBroadcast(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Debug, "message", flam.Bag{"key": "value"}).
+			Broadcast(gomock.Any(), Debug, "message", flam.Bag{"key": "value"}).
 			Return(nil).
 			Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.DebugBroadcast("message", flam.Bag{"key": "value"}))
@@ -773,14 +771,14 @@ func Test_facade_Flush(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Signal(gomock.Any(), log.Notice, "channel", "message3", flam.Bag{"key3": "value3"}).
+			Signal(gomock.Any(), Notice, "channel", "message3", flam.Bag{"key3": "value3"}).
 			Return(expectedErr)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeSignal("channel", "message3", flam.Bag{"key3": "value3"}))
@@ -797,14 +795,14 @@ func Test_facade_Flush(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Notice, "message3", flam.Bag{"key3": "value3"}).
+			Broadcast(gomock.Any(), Notice, "message3", flam.Bag{"key3": "value3"}).
 			Return(expectedErr)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.NoticeBroadcast("message3", flam.Bag{"key3": "value3"}))
@@ -820,20 +818,20 @@ func Test_facade_Flush(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Debug, "message1", flam.Bag{"key1": "value1"}).
+			Broadcast(gomock.Any(), Debug, "message1", flam.Bag{"key1": "value1"}).
 			Return(nil)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Info, "message2", flam.Bag{"key2": "value2"}).
+			Broadcast(gomock.Any(), Info, "message2", flam.Bag{"key2": "value2"}).
 			Return(nil)
 		stream.EXPECT().
-			Broadcast(gomock.Any(), log.Notice, "message3", flam.Bag{"key3": "value3"}).
+			Broadcast(gomock.Any(), Notice, "message3", flam.Bag{"key3": "value3"}).
 			Return(nil)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.DebugBroadcast("message1", flam.Bag{"key1": "value1"}))
@@ -850,9 +848,9 @@ func Test_facade_HasSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.False(t, facade.HasSerializer("serializer"))
 		}))
 	})
@@ -865,16 +863,16 @@ func Test_facade_HasSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer": flam.Bag{}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.True(t, facade.HasSerializer("serializer"))
 		}))
 	})
@@ -887,11 +885,11 @@ func Test_facade_HasSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		serializer := mocks.NewSerializer(ctrl)
+		serializer := NewSerializerMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddSerializer("serializer", serializer))
 
 			assert.True(t, facade.HasSerializer("serializer"))
@@ -908,9 +906,9 @@ func Test_facade_ListSerializers(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.Empty(t, facade.ListSerializers())
 		}))
 	})
@@ -923,11 +921,11 @@ func Test_facade_ListSerializers(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			require.NoError(t, facade.AddSerializer("serializer1", mocks.NewSerializer(ctrl)))
-			require.NoError(t, facade.AddSerializer("serializer2", mocks.NewSerializer(ctrl)))
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			require.NoError(t, facade.AddSerializer("serializer1", NewSerializerMock(ctrl)))
+			require.NoError(t, facade.AddSerializer("serializer2", NewSerializerMock(ctrl)))
 
 			assert.ElementsMatch(t, []string{"serializer1", "serializer2"}, facade.ListSerializers())
 		}))
@@ -941,16 +939,16 @@ func Test_facade_ListSerializers(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer1": flam.Bag{}, "serializer2": flam.Bag{}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.ElementsMatch(t, []string{"serializer1", "serializer2"}, facade.ListSerializers())
 		}))
 	})
@@ -963,17 +961,17 @@ func Test_facade_ListSerializers(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer1": flam.Bag{}, "serializer3": flam.Bag{}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(2)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(2)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			require.NoError(t, facade.AddSerializer("serializer2", mocks.NewSerializer(ctrl)))
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			require.NoError(t, facade.AddSerializer("serializer2", NewSerializerMock(ctrl)))
 
 			assert.ElementsMatch(
 				t,
@@ -992,9 +990,9 @@ func Test_facade_GetSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetSerializer("serializer")
 			assert.Nil(t, got)
 			assert.ErrorIs(t, e, flam.ErrUnknownResource)
@@ -1009,16 +1007,16 @@ func Test_facade_GetSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer": flam.Bag{"driver": "mock"}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetSerializer("serializer")
 			assert.Nil(t, got)
 			assert.ErrorIs(t, e, flam.ErrInvalidResourceConfig)
@@ -1033,25 +1031,25 @@ func Test_facade_GetSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer": flam.Bag{"driver": "mock"}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
 		expectedErr := errors.New("expected error")
 		serializerCreatorConfig := flam.Bag{"id": "serializer", "driver": "mock"}
-		serializerCreator := mocks.NewSerializerCreator(ctrl)
+		serializerCreator := NewSerializerCreatorMock(ctrl)
 		serializerCreator.EXPECT().Accept(serializerCreatorConfig).Return(true).Times(1)
 		serializerCreator.EXPECT().Create(serializerCreatorConfig).Return(nil, expectedErr).Times(1)
-		require.NoError(t, container.Provide(func() log.SerializerCreator {
+		require.NoError(t, container.Provide(func() SerializerCreator {
 			return serializerCreator
-		}, dig.Group(log.SerializerCreatorGroup)))
+		}, dig.Group(SerializerCreatorGroup)))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetSerializer("serializer")
 			assert.Nil(t, got)
 			assert.ErrorIs(t, e, expectedErr)
@@ -1066,16 +1064,16 @@ func Test_facade_GetSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		cfg := flam.Bag{"serializer": flam.Bag{"driver": log.SerializerDriverString}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		cfg := flam.Bag{"serializer": flam.Bag{"driver": SerializerDriverString}}
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetSerializer("serializer")
 			assert.NotNil(t, got)
 			assert.NoError(t, e)
@@ -1090,16 +1088,16 @@ func Test_facade_GetSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		cfg := flam.Bag{"serializer": flam.Bag{"driver": log.SerializerDriverJson}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		cfg := flam.Bag{"serializer": flam.Bag{"driver": SerializerDriverJson}}
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetSerializer("serializer")
 			assert.NotNil(t, got)
 			assert.NoError(t, e)
@@ -1116,9 +1114,9 @@ func Test_facade_AddSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.ErrorIs(t, facade.AddSerializer("serializer", nil), flam.ErrNilReference)
 		}))
 	})
@@ -1131,18 +1129,18 @@ func Test_facade_AddSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		serializer := mocks.NewSerializer(ctrl)
+		serializer := NewSerializerMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddSerializer("serializer", serializer))
 
 			got, e := facade.GetSerializer("serializer")
@@ -1159,18 +1157,18 @@ func Test_facade_AddSerializer(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		cfg := flam.Bag{"serializer": flam.Bag{"driver": "mock"}}
-		factoryConfig := mocks.NewFactoryConfig(ctrl)
-		factoryConfig.EXPECT().Get(log.PathSerializers).Return(cfg).Times(1)
+		factoryConfig := NewFactoryConfigMock(ctrl)
+		factoryConfig.EXPECT().Get(PathSerializers).Return(cfg).Times(1)
 		require.NoError(t, container.Decorate(func(flam.FactoryConfig) flam.FactoryConfig {
 			return factoryConfig
 		}))
 
-		serializer := mocks.NewSerializer(ctrl)
+		serializer := NewSerializerMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.ErrorIs(
 				t,
 				facade.AddSerializer("serializer", serializer),
@@ -1185,9 +1183,9 @@ func Test_Facade_HasStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.False(t, facade.HasStream("unknown"))
 		}))
 	})
@@ -1197,16 +1195,16 @@ func Test_Facade_HasStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		assert.NoError(t, container.Invoke(func(facade config.Facade) {
-			assert.NoError(t, facade.Set(log.PathStreams, flam.Bag{
+			assert.NoError(t, facade.Set(PathStreams, flam.Bag{
 				"stream": flam.Bag{
 					"driver": "mock",
 				}}))
 		}))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.False(t, facade.HasStream("stream"))
 		}))
 	})
@@ -1215,7 +1213,7 @@ func Test_Facade_HasStream(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		_ = config.Defaults.Set(log.PathStreams, flam.Bag{
+		_ = config.Defaults.Set(PathStreams, flam.Bag{
 			"stream": flam.Bag{
 				"driver": "mock",
 			}})
@@ -1225,11 +1223,11 @@ func Test_Facade_HasStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.True(t, facade.HasStream("stream"))
@@ -1243,9 +1241,9 @@ func Test_Facade_ListStreams(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.Empty(t, facade.ListStreams())
 		}))
 	})
@@ -1258,13 +1256,13 @@ func Test_Facade_ListStreams(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream1 := mocks.NewStream(ctrl)
-		stream2 := mocks.NewStream(ctrl)
-		stream3 := mocks.NewStream(ctrl)
+		stream1 := NewStreamMock(ctrl)
+		stream2 := NewStreamMock(ctrl)
+		stream3 := NewStreamMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("zulu", stream3))
 			require.NoError(t, facade.AddStream("alpha", stream1))
 			require.NoError(t, facade.AddStream("charlie", stream2))
@@ -1283,12 +1281,12 @@ func Test_Facade_GetStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			got, e := facade.GetStream("unknown")
 			assert.Nil(t, got)
-			assert.ErrorIs(t, e, log.ErrStreamNotFound)
+			assert.ErrorIs(t, e, ErrStreamNotFound)
 		}))
 	})
 
@@ -1300,11 +1298,11 @@ func Test_Facade_GetStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			got, e := facade.GetStream("stream")
@@ -1320,9 +1318,9 @@ func Test_Facade_AddStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			assert.ErrorIs(t, facade.AddStream("stream", nil), flam.ErrNilReference)
 		}))
 	})
@@ -1335,13 +1333,13 @@ func Test_Facade_AddStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
-			assert.ErrorIs(t, facade.AddStream("stream", stream), log.ErrDuplicateStream)
+			assert.ErrorIs(t, facade.AddStream("stream", stream), ErrDuplicateStream)
 		}))
 	})
 
@@ -1353,11 +1351,11 @@ func Test_Facade_AddStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			got, e := facade.GetStream("stream")
@@ -1373,10 +1371,10 @@ func Test_Facade_RemoveStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
-			assert.ErrorIs(t, facade.RemoveStream("stream"), log.ErrStreamNotFound)
+		assert.NoError(t, container.Invoke(func(facade Facade) {
+			assert.ErrorIs(t, facade.RemoveStream("stream"), ErrStreamNotFound)
 		}))
 	})
 
@@ -1388,13 +1386,13 @@ func Test_Facade_RemoveStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		expectedErr := errors.New("close error")
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().Close().Return(expectedErr).Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.ErrorIs(t, facade.RemoveStream("stream"), expectedErr)
@@ -1409,12 +1407,12 @@ func Test_Facade_RemoveStream(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().Close().Return(nil).Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.NoError(t, facade.RemoveStream("stream"))
@@ -1433,13 +1431,13 @@ func Test_Facade_RemoveAllStreams(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
 		expectedErr := errors.New("close error")
-		stream := mocks.NewStream(ctrl)
+		stream := NewStreamMock(ctrl)
 		stream.EXPECT().Close().Return(expectedErr)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream", stream))
 
 			assert.ErrorIs(t, facade.RemoveAllStreams(), expectedErr)
@@ -1454,15 +1452,15 @@ func Test_Facade_RemoveAllStreams(t *testing.T) {
 		require.NoError(t, time.NewProvider().Register(container))
 		require.NoError(t, filesystem.NewProvider().Register(container))
 		require.NoError(t, config.NewProvider().Register(container))
-		require.NoError(t, log.NewProvider().Register(container))
+		require.NoError(t, NewProvider().Register(container))
 
-		stream1 := mocks.NewStream(ctrl)
+		stream1 := NewStreamMock(ctrl)
 		stream1.EXPECT().Close().Return(nil).Times(1)
 
-		stream2 := mocks.NewStream(ctrl)
+		stream2 := NewStreamMock(ctrl)
 		stream2.EXPECT().Close().Return(nil).Times(1)
 
-		assert.NoError(t, container.Invoke(func(facade log.Facade) {
+		assert.NoError(t, container.Invoke(func(facade Facade) {
 			require.NoError(t, facade.AddStream("stream1", stream1))
 			require.NoError(t, facade.AddStream("stream2", stream2))
 
